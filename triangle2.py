@@ -10,6 +10,7 @@ def main(rule,depth,size):
 
     tracer(0)
     ht()
+    size = size*500
 
     screen = Screen()
     canvas = screen.getcanvas()
@@ -50,6 +51,6 @@ def main(rule,depth,size):
 if __name__ == "__main__":
     rule = "F"+"".join(c+"F" for c in sys.argv[1])
     depth = int(sys.argv[2]) if len(sys.argv) > 2 else 1
-    size = int(sys.argv[3]) if len(sys.argv) > 3 else 100
+    size = int(sys.argv[3]) if len(sys.argv) > 3 else 1
 
     main(rule,depth,size)
