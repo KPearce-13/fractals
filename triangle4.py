@@ -106,17 +106,19 @@ def main(rule,depth):
                 heading = (heading-1)%3
         return np.hypot(x,y)
 
-    def Replace(word): #I think this is sufficient but should probably add more
+    def Replace(word): #Some of these may never be used
         while "v" in word:
             word = word.replace("RvR","l")
             word = word.replace("LvL","r")
+            word = word.replace("Lvr","v")
+            word = word.replace("Rvl","v")
             word = word.replace("lvR","v")
             word = word.replace("rvL","v")
             word = word.replace("+v+","-")
             word = word.replace("-v-","+")
             word = word.replace("-v+","v")
             word = word.replace("+v-","v")
-        return word #add more
+        return word
     
     CreateLeft = {"F":"R","+":"+","-":"v","0":"-"}
     CreateRight = {"F":"L","+":"v","-":"-","0":"+"}
@@ -126,8 +128,8 @@ def main(rule,depth):
     scaling = scale(rule)
     print(f"Scaling factor = root {scaling**2:.0f} ≈ {scaling:.2}")
     rule_R = Replace(LeftBoundary)
-    rule_L = Replace(RightBoundary)
     print(f"Left boundary (red): P_1(R)={rule_R}, P_1(l)={Invert(rule_R)}")
+    rule_L = Replace(RightBoundary)
     print(f"Right boundary (blue): P_1(L)={rule_L}, P_1(r)={Invert(rule_L)}")
     color("red")
     pendown()
