@@ -106,7 +106,7 @@ def main(rule,depth):
                 heading = (heading-1)%3
         return np.hypot(x,y)
 
-    def Replace(word): #Some of these may never be used
+    def Replace(word):
         while "v" in word:
             word = word.replace("RvR","l")
             word = word.replace("LvL","r")
@@ -160,3 +160,4 @@ if __name__ == "__main__":
     depth = int(sys.argv[2]) if len(sys.argv) > 2 else 1
 
     main(rule,depth)
+
