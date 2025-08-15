@@ -25,12 +25,12 @@ def main(rule,depth):
             return left(120)
     
     def Alphabet_1(character,size):
-        if character=="R":
+        if character=="R" or character=="r":
             fd(np.sqrt(3)/3*size)
             right(60)
             fd(np.sqrt(3)/3*size)
             return
-        if character=="L":
+        if character=="L" or character=="l":
             fd(np.sqrt(3)/3*size)
             left(60)
             fd(np.sqrt(3)/3*size)
@@ -54,21 +54,42 @@ def main(rule,depth):
             else:
                 P_0(iterate_0(word[i],rule),rule,depth-1,size/scaling)
 
-    def iterate_1(character,rule_L,rule_R):
+    def Switch(character):
         if character=="R":
-            return rule_L
-        elif character=="L":
+            return "l"
+        if character=="L":
+            return "r"
+        if character=="r":
+            return "L"
+        if character=="l":
+            return "R"
+        if character=="+":
+            return "-"
+        if character=="-":
+            return "+"
+
+    def Invert(word):
+        return "".join([Switch(i) for i in word[::-1]])
+
+    def iterate_1(character,rule_R,rule_L):
+        if character=="R":
             return rule_R
+        elif character=="L":
+            return rule_L
+        elif character=="r":
+            return Invert(rule_L)
+        elif character=="l":
+            return Invert(rule_R)
         else:
             return character
 
-    def P_1(word,rule_L,rule_R,depth,size):
+    def P_1(word,rule_R,rule_L,depth,size):
         width(size/10)
         for i in range(0,len(word)):
             if depth==0:
                 Alphabet_1(word[i],size)
             else:
-                P_1(iterate_1(word[i],rule_L,rule_R),rule_L,rule_R,depth-1,size/scaling)
+                P_1(iterate_1(word[i],rule_R,rule_L),rule_R,rule_L,depth-1,size/scaling)
 
     def scale(axiom):
         x,y = 0.0,0.0
@@ -85,10 +106,17 @@ def main(rule,depth):
                 heading = (heading-1)%3
         return np.hypot(x,y)
 
-    def Replace(word):
+    def Replace(word): #I think this is sufficient but should probably add more
         while "v" in word:
-            word = word.replace("RvR","L").replace("LvL","R").replace("LvR","v").replace("RvL","v").replace("+v+","-").replace("-v-","+").replace("-v+","v").replace("+v-","v")
-        return word
+            word = word.replace("RvR","l")
+            word = word.replace("LvL","r")
+            word = word.replace("lvR","v")
+            word = word.replace("rvL","v")
+            word = word.replace("+v+","-")
+            word = word.replace("-v-","+")
+            word = word.replace("-v+","v")
+            word = word.replace("+v-","v")
+        return word #add more
     
     CreateLeft = {"F":"R","+":"+","-":"v","0":"-"}
     CreateRight = {"F":"L","+":"v","-":"-","0":"+"}
@@ -97,20 +125,20 @@ def main(rule,depth):
 
     scaling = scale(rule)
     print(f"Scaling factor = root {scaling**2:.0f} ≈ {scaling:.2}")
-    rule_L = Replace(LeftBoundary)
-    rule_R = Replace(RightBoundary)
-    print(f"Left boundary (red): P_1(R)={rule_L}")
-    print(f"Right boundary (blue): P_1(L)={rule_R}")
+    rule_R = Replace(LeftBoundary)
+    rule_L = Replace(RightBoundary)
+    print(f"Left boundary (red): P_1(R)={rule_R}, P_1(l)={Invert(rule_R)}")
+    print(f"Right boundary (blue): P_1(L)={rule_L}, P_1(r)={Invert(rule_L)}")
     color("red")
     pendown()
     left(30)
-    P_1("R",rule_L,rule_R,depth,size) #left boundary
+    P_1("R",rule_R,rule_L,depth,size) #left boundary
     penup()
     home()
     color("blue")
     pendown()
     right(30)
-    P_1("L",rule_L,rule_R,depth,size) #right boundary
+    P_1("L",rule_R,rule_L,depth,size) #right boundary
     penup()
     home()
     color("black")
